@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.apelisser</groupId>
 	<artifactId>base</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>Basic project base</name>
 	<description>Basic structure for REST application</description>
 	<url/>
