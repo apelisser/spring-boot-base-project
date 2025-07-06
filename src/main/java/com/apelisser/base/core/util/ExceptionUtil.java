@@ -1,5 +1,8 @@
 package com.apelisser.base.core.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Optional;
 
 public final class ExceptionUtil {
@@ -25,6 +28,29 @@ public final class ExceptionUtil {
             rootCause = rootCause.getCause();
         }
         return Optional.of(rootCause);
+    }
+
+    /**
+     * Converts the stack trace of a given {@link Throwable} into a string.
+     * Returns an empty {@link Optional} if the provided throwable is null.
+     *
+     * @param throwable the throwable whose stack trace is to be converted
+     * @return an optional containing the stack trace as a string, or empty if
+     *         the throwable is null or an error occurs during conversion
+     */
+    public static Optional<String> getStackTraceAsString(Throwable throwable) {
+        if (throwable == null) {
+            return Optional.empty();
+        }
+
+        try (OutputStream out = new ByteArrayOutputStream();
+                PrintStream printStream = new PrintStream(out)) {
+            throwable.printStackTrace(printStream);
+            printStream.flush();
+            return Optional.ofNullable(out.toString());
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
 }
