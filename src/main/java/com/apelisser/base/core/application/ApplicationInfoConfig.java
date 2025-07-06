@@ -1,4 +1,4 @@
-package com.apelisser.base.core.appinfo;
+package com.apelisser.base.core.application;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.ConstructorBinding;
@@ -9,7 +9,6 @@ public class ApplicationInfoConfig {
     private final String name;
     private final String description;
     private final String appVersion;
-    private final String springBootVersion;
     private final String javaVersion;
 
     @ConstructorBinding
@@ -18,7 +17,6 @@ public class ApplicationInfoConfig {
         this.name = name;
         this.description = description;
         this.appVersion = appVersion;
-        this.springBootVersion = springBootVersion;
         this.javaVersion = javaVersion;
     }
 
@@ -34,18 +32,18 @@ public class ApplicationInfoConfig {
         return appVersion;
     }
 
-    public String getSpringBootVersion() {
-        return springBootVersion;
-    }
-
     public String getJavaVersion() {
         return javaVersion;
     }
 
     @Override
     public String toString() {
-        return "ApplicationInfoConfig [name=" + name + ", description=" + description + ", appVersion=" + appVersion
-                + ", springBootVersion=" + springBootVersion + ", javaVersion=" + javaVersion + "]";
+        return "ApplicationInfoConfig{" +
+            "name='" + name + '\'' +
+            ", description='" + description + '\'' +
+            ", appVersion='" + appVersion + '\'' +
+            ", javaVersion='" + javaVersion + '\'' +
+            '}';
     }
 
 }

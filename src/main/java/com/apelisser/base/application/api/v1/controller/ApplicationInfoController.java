@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.apelisser.base.core.appinfo.ApplicationInfoConfig;
+import com.apelisser.base.core.application.ApplicationInfoConfig;
 
 @RestController
 @RequestMapping(
