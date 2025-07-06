@@ -63,7 +63,7 @@ public class ExceptionHandlingHelper extends FrameworkExceptionHandler {
 
     @Override
     protected Problem.ProblemBuilder createProblemBuilder(HttpStatusCode status, ProblemType problemType,
-        String detail) {
+            String detail) {
         String title = getMessage(problemType.getTitle());
         String type = getMessage(problemType.getPath());
         return Problem.builder()
