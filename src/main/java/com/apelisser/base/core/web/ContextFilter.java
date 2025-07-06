@@ -1,11 +1,6 @@
-package com.apelisser.base.core.context.filter;
-
-import java.io.IOException;
-import java.util.UUID;
+package com.apelisser.base.core.web;
 
 import com.apelisser.base.core.context.Context;
-import com.apelisser.base.core.context.impl.ContextProperty;
-
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,7 +8,14 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
+import java.util.UUID;
+
+import static com.apelisser.base.core.context.ContextKey.REQUEST_ID;
+
 public class ContextFilter implements Filter {
+
+    private static final String REQUEST_ID_HEADER = "x-request-id";
 
     private final Context context;
 
@@ -35,12 +37,13 @@ public class ContextFilter implements Filter {
 
     private void addRequestIdInContext() {
         String uuid = UUID.randomUUID().toString();
-        context.add(ContextProperty.REQUEST_ID, uuid);
+        context.add(REQUEST_ID, uuid);
     }
 
     private void addRequestIdInResponseHeader(ServletResponse response) {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        httpResponse.setHeader("x-request-id", context.get(ContextProperty.REQUEST_ID));
+        context.get(REQUEST_ID).ifPresent(requestId ->
+            httpResponse.addHeader(REQUEST_ID_HEADER, requestId));
     }
 
 }

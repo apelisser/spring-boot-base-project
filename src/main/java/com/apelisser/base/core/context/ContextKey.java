@@ -1,7 +1,17 @@
 package com.apelisser.base.core.context;
 
-public interface ContextKey {
+public enum ContextKey {
 
-    String getName();
+    REQUEST_ID("requestId");
+
+    private final String key;
+
+    ContextKey(String key) {
+        this.key = key;
+    }
+
+    public String getName() {
+        return key;
+    }
 
 }
