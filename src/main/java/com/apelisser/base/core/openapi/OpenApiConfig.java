@@ -13,21 +13,21 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
 
-    private final SpringDocConfigProperties springDocConfig;
     private final ApplicationInfoConfig appInfo;
+    private final String openApiVersion;
 
-    public OpenApiConfig(SpringDocConfigProperties springDocConfig, ApplicationInfoConfig appInfo) {
-        this.springDocConfig = springDocConfig;
+    public OpenApiConfig(ApplicationInfoConfig appInfo, SpringDocConfigProperties springDocConfig) {
         this.appInfo = appInfo;
+        this.openApiVersion = springDocConfig.getApiDocs().getVersion().getVersion();
     }
 
     @Bean
     public OpenAPI customOpenAPI() {
-        OpenAPI openAPI = new OpenAPI();
-        openAPI.setOpenapi(this.getOpenApiVersion());
-        openAPI.setInfo(this.getOpenApiInfo());
-        openAPI.setTags(this.loadTags());
-        return openAPI;
+        OpenAPI openApi = new OpenAPI();
+        openApi.setOpenapi(openApiVersion);
+        openApi.setInfo(this.getOpenApiInfo());
+        openApi.setTags(this.getTags());
+        return openApi;
     }
 
     private Info getOpenApiInfo() {
@@ -37,15 +37,11 @@ public class OpenApiConfig {
             .version(appInfo.getAppVersion());
     }
 
-    private List<Tag> loadTags() {
+    private List<Tag> getTags() {
         return List.of(
             new Tag().name(TagConstants.APPLICATION_INFO).description(TagConstants.APPLICATION_INFO_DESCRIPTION),
             new Tag().name(TagConstants.I18N_TEST).description(TagConstants.I18N_TEST_DESCRIPTION)
         );
-    }
-
-    private String getOpenApiVersion() {
-        return springDocConfig.getApiDocs().getVersion().getVersion();
     }
 
 }
