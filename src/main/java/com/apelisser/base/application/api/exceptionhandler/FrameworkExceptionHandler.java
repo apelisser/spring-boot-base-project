@@ -25,12 +25,14 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -153,9 +155,9 @@ public abstract class FrameworkExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handleHandlerMethodValidationException(HandlerMethodValidationException ex,
             HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ProblemType problemType = ProblemType.INVALID_DATA;
-        String genericMessage = getMessage(METHOD_ARGUMENT_NOT_VALID_MESSAGE);
+        String genericMessage = getMessage(EX_METHOD_ARGUMENT_NOT_VALID_MESSAGE);
 
-        List<Problem.Object> problemObjects = ex.getAllValidationResults().stream()
+        List<Problem.Object> problemObjects = ex.getValueResults().stream()
                 .flatMap(parameter -> {
                     String name = parameter.getMethodParameter().getParameterName();
                     return parameter.getResolvableErrors().stream()
@@ -212,7 +214,7 @@ public abstract class FrameworkExceptionHandler extends ResponseEntityExceptionH
 
         ProblemType problemType = ProblemType.UNREADABLE_MESSAGE;
         String userMessage = getMessage(GENERIC_USER_MESSAGE);
-        String detailMessage = getMessage(HTTP_MESSAGE_NOT_READABLE_MESSAGE);
+        String detailMessage = getMessage(EX_HTTP_MESSAGE_NOT_READABLE_MESSAGE);
         Problem problem = createProblemBuilder(status, problemType, detailMessage)
                 .userMessage(userMessage)
                 .build();
@@ -238,7 +240,7 @@ public abstract class FrameworkExceptionHandler extends ResponseEntityExceptionH
         BindingResult bindingResult = ex.getBindingResult();
 
         ProblemType problemType = ProblemType.INVALID_DATA;
-        String detailMessage = getMessage(METHOD_ARGUMENT_NOT_VALID_MESSAGE);
+        String detailMessage = getMessage(EX_METHOD_ARGUMENT_NOT_VALID_MESSAGE);
         List<Problem.Object> problemObjects = bindingResult.getAllErrors().stream()
                 .map(error -> {
                     String message = getMessage(error);
@@ -296,6 +298,22 @@ public abstract class FrameworkExceptionHandler extends ResponseEntityExceptionH
     }
 
     @Override
+    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers,
+            HttpStatusCode status, WebRequest request) {
+        ProblemType problemType = ProblemType.INVALID_DATA;
+        String userMessage = getMessage(EX_NO_HANDLER_FOUND_MESSAGE);
+        String detailMessage = getMessage(EX_NO_HANDLER_FOUND_DETAIL, ex.getRequestURL());
+
+        Problem problem = createProblemBuilder(status, problemType, detailMessage)
+            .userMessage(userMessage)
+            .build();
+
+        createValidationLog(problem);
+
+        return handleExceptionInternal(ex, problem, headers, status, request);
+    }
+
+    @Override
     @Nullable
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex,
             HttpHeaders headers, HttpStatusCode status, WebRequest request) {
@@ -322,6 +340,22 @@ public abstract class FrameworkExceptionHandler extends ResponseEntityExceptionH
         }
 
         return super.handleTypeMismatch(ex, headers, status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMissingPathVariable(MissingPathVariableException ex, HttpHeaders headers,
+            HttpStatusCode status, WebRequest request) {
+        ProblemType problemType = ProblemType.INVALID_DATA;
+        String userMessage = getMessage(EX_MISSING_PATH_VARIABLE_MESSAGE);
+        String detailMessage = getMessage(EX_MISSING_PATH_VARIABLE_DETAIL, ex.getVariableName());
+
+        Problem problem = createProblemBuilder(status, problemType, detailMessage)
+            .userMessage(userMessage)
+            .build();
+
+        createValidationLog(problem);
+
+        return handleExceptionInternal(ex, problem, headers, status, request);
     }
 
     @Override

@@ -36,18 +36,12 @@ public enum ProblemType {
             PROBLEM_HTTP_MEDIA_TYPE_NOT_ACCEPTABLE_TITLE,
             PROBLEM_HTTP_MEDIA_TYPE_NOT_ACCEPTABLE_PATH);
 
-    private final String domain;
     private final String title;
     private final String path;
 
     ProblemType(String title, String path) {
-        this.domain = PROBLEM_DOMAIN;
         this.title = title;
         this.path = path;
-    }
-
-    public String getDomain() {
-        return domain;
     }
 
     public String getPath() {

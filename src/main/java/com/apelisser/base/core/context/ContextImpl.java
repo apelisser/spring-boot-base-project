@@ -1,13 +1,10 @@
-package com.apelisser.base.core.context.impl;
-
-import java.util.Map;
+package com.apelisser.base.core.context;
 
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
-import com.apelisser.base.core.context.Context;
-import com.apelisser.base.core.context.ContextKey;
+import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class ContextImpl implements Context {
@@ -19,14 +16,18 @@ public class ContextImpl implements Context {
     }
 
     @Override
-    public String get(ContextKey key) {
+    public Optional<String> get(ContextKey key) {
         validateKey(key);
-        return MDC.get(key.getName());
+        return Optional.ofNullable(MDC.get(key.getName()));
     }
 
     @Override
-    public Map<String, String> getAll() {
-        return MDC.getCopyOfContextMap();
+    public Optional<Map<String, String>> getAll() {
+        Map<String, String> copyOfContextMap = MDC.getCopyOfContextMap();
+
+        return copyOfContextMap != null && !copyOfContextMap.isEmpty()
+            ? Optional.of(copyOfContextMap)
+            : Optional.empty();
     }
 
     @Override
@@ -48,7 +49,9 @@ public class ContextImpl implements Context {
     }
 
     private void validateKey(ContextKey key) {
-        Assert.notNull(key, "Key cannot be null.");
+        if (key == null) {
+            throw new IllegalArgumentException("Key cannot be null.");
+        }
     }
 
 }

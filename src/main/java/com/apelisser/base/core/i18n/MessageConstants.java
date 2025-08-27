@@ -9,7 +9,6 @@ public final class MessageConstants {
     public static final String APPLICATION_TEST = "application.test";
 
     // exception-handler :: problem type
-    public static final String PROBLEM_DOMAIN = "problem.domain";
     public static final String PROBLEM_SYSTEM_ERROR_TITLE = "problem.system-error.title";
     public static final String PROBLEM_SYSTEM_ERROR_PATH = "problem.system-error.path";
     public static final String PROBLEM_UNREADABLE_MESSAGE_TITLE = "problem.unreadable-message.title";
@@ -29,9 +28,8 @@ public final class MessageConstants {
 
     // exception-handler :: exceptions messages
     public static final String GENERIC_USER_MESSAGE = "exception.generic.message";
-    public static final String METHOD_ARGUMENT_NOT_VALID_MESSAGE = "exception.method-argument-not-valid.message";
-    public static final String HTTP_MESSAGE_NOT_READABLE_MESSAGE = "exception.http-message-not-readable.message";
-
+    public static final String EX_METHOD_ARGUMENT_NOT_VALID_MESSAGE = "exception.method-argument-not-valid.message";
+    public static final String EX_HTTP_MESSAGE_NOT_READABLE_MESSAGE = "exception.http-message-not-readable.message";
     public static final String EX_INVALID_FORMAT_MESSAGE = "exception.invalid-format.message";
     public static final String EX_INVALID_FORMAT_DETAIL = "exception.invalid-format.detail";
     public static final String EX_PROPERTY_BINDING_MESSAGE = "exception.property-binding.message";
@@ -51,6 +49,11 @@ public final class MessageConstants {
     public static final String EX_METHOD_ARGUMENT_TYPE_MISMATCH_DETAIL_WITHOUT_TYPE = "exception.method-argument-type-mismatch.detail-without-type";
     public static final String EX_MISSING_REQUEST_HEADER_MESSAGE = "exception.missing-servlet-request-header.message";
     public static final String EX_MISSING_REQUEST_HEADER_DETAIL = "exception.missing-servlet-request-header.detail";
+    public static final String EX_MISSING_PATH_VARIABLE_MESSAGE = "exception.missing-path-variable.message";
+    public static final String EX_MISSING_PATH_VARIABLE_DETAIL = "exception.missing-path-variable.detail";
+    public static final String EX_NO_HANDLER_FOUND_MESSAGE = "exception.no-handler-found.message";
+    public static final String EX_NO_HANDLER_FOUND_DETAIL = "exception.no-handler-found.detail";
+
 
     private MessageConstants() {
         throw new IllegalStateException("Utility class");

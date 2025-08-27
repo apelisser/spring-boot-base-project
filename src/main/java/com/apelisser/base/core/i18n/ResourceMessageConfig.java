@@ -20,7 +20,7 @@ public class ResourceMessageConfig {
         var source = new ResourceBundleMessageSource();
 
         // Set the basename of the resource bundle files
-        source.setBasenames("messages/message");
+        source.setBasenames("i18n/message");
 
         // Set the base name of the resource bundle files
         source.setDefaultEncoding(StandardCharsets.UTF_8.displayName());
@@ -28,11 +28,8 @@ public class ResourceMessageConfig {
         // Set the location of the properties files containing the messages
         source.setDefaultLocale(Locale.US);
 
-        /**
-         * true: uses its own code if there is no corresponding message in the file;
-         * false: throws no-such-message-exception if there is no corresponding code to
-         * the message in the file;
-         */
+        // true: uses its own code if there is no corresponding message in the file;
+        // false: throws no-such-message-exception if there is no corresponding code to the message in the file;
         source.setUseCodeAsDefaultMessage(false);
 
         return source;

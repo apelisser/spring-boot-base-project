@@ -3,6 +3,7 @@ package com.apelisser.base.application.api.exceptionhandler;
 import java.time.OffsetDateTime;
 import java.util.Locale;
 
+import com.apelisser.base.core.context.ContextKey;
 import org.slf4j.Logger;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatusCode;
@@ -10,7 +11,6 @@ import org.springframework.http.HttpStatusCode;
 import com.apelisser.base.application.api.exceptionhandler.model.Problem;
 import com.apelisser.base.application.api.exceptionhandler.model.ProblemType;
 import com.apelisser.base.core.context.Context;
-import com.apelisser.base.core.context.impl.ContextProperty;
 import com.apelisser.base.core.i18n.MessageManager;
 
 public class ExceptionHandlingHelper extends FrameworkExceptionHandler {
@@ -42,7 +42,7 @@ public class ExceptionHandlingHelper extends FrameworkExceptionHandler {
 
     @Override
     protected String getRequestId() {
-        return context.get(ContextProperty.REQUEST_ID);
+        return context.get(ContextKey.REQUEST_ID).orElse(null);
     }
 
     @Override
@@ -54,10 +54,10 @@ public class ExceptionHandlingHelper extends FrameworkExceptionHandler {
         Locale locale = messageManager.getContextLocale();
         if (problem.hasErrorObjects()) {
             log.warn("Validation error | lang '{}' | type: '{}' | message: '{}' | fields: {}",
-                    locale, problem.getTitle(), problem.getDetail(), problem.getFormattedErrorObjects());
+                locale, problem.getTitle(), problem.getDetail(), problem.getFormattedErrorObjects());
         } else {
             log.warn("Validation error | lang '{}' | type: '{}' | message: '{}'",
-                    locale, problem.getTitle(), problem.getDetail());
+                locale, problem.getTitle(), problem.getDetail());
         }
     }
 
@@ -67,12 +67,12 @@ public class ExceptionHandlingHelper extends FrameworkExceptionHandler {
         String title = getMessage(problemType.getTitle());
         String type = getMessage(problemType.getPath());
         return Problem.builder()
-                .status(status.value())
-                .type(type)
-                .title(title)
-                .detail(detail)
-                .timestamp(OffsetDateTime.now())
-                .requestId(getRequestId());
+            .status(status.value())
+            .type(type)
+            .title(title)
+            .detail(detail)
+            .timestamp(OffsetDateTime.now())
+            .requestId(getRequestId());
     }
 
 }
