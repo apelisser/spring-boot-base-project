@@ -15,7 +15,7 @@ import static com.apelisser.base.core.context.ContextKey.REQUEST_ID;
 
 public class ContextFilter implements Filter {
 
-    private static final String REQUEST_ID_HEADER = "x-request-id";
+    private static final String REQUEST_ID_HEADER = "X-Request-ID";
 
     private final Context context;
 
