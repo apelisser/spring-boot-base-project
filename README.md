@@ -1,125 +1,243 @@
-## Resumo
+# Base Project - Spring Boot REST API
 
-Este projeto serve como ponto de partida para o desenvolvimento de aplicações REST utilizando Spring Boot (com spring-web).
+## Overview
 
-Os recursos já implementados no projeto são:
+This project serves as a **base template** for developing REST applications using **Spring Boot** and **spring-web**, already prepared for **containerized local execution** with Docker and NGINX.
 
-- **Internacionalização**
-  - foi implementada uma estrutura de internacionalização para as mensagens da aplicação;
-  - `en_US` está definido como padrão, com fácil personalização;
+The project is designed to simulate a **production-like setup**, including:
 
-- **Contexto**
-  - foi implementada uma estrutura para o uso de contexto na aplicação;
-  - incluído o `requestId` em todas as requisições atendidas;
-  - o `requestId` é retornado no cabeçalho `x-request-id` de todas as respostas;
-  - é possível adicionar mais informações ao contexto, conforme necessário;
-
-- **Logs**
-  - foi configurado um arquivo de personalização para os logs da aplicação utilizando Logback;
-  - o `requestId` presente no contexto é incluído automaticamente nos logs da aplicação, facilitando o rastreamento;
-
-- **Exception Handler**
-  - foi implementada uma estrutura para manipulação de exceções;
-  - as validações foram personalizadas para os principais erros tratados pelo framework em requisições REST;
-  - o retorno foi padronizado com `problem-detail`, formato agora suportado pelo Spring Framework;
-  - é possível adicionar manipuladores específicos para exceções conforme necessário;
+* multiple backend instances
+* reverse proxy
+* external context path
+* centralized build and runtime control
 
 ---
 
-## Instruções para execução da aplicação
+## Implemented Features
 
-### Tecnologias utilizadas
-- Java Development Kit 21
-- Maven
-- Docker
-- Git
-- Postman
+### 🌐 Internationalization (i18n)
 
-### Passos para execução
-1. Clonar o repositório utilizando o comando abaixo  
-```sh
-git clone <repositorio>
-```
+* Message internationalization structure is in place
+* `en_US` is the default locale
+* Easily extensible to other languages
 
-2. Acessar diretório criado pelo passo anterior  
-```sh
-cd <diretorio>
-``` 
+### 🧵 Request Context
 
-3. Fazer o build do projeto  
-```sh
-mvn clean package
-```
+* Centralized request context handling
+* A `requestId` is generated for every request
+* The `requestId` is returned in the `x-request-id` response header
+* Additional contextual data can be added if needed
 
-4. Criar uma imagem docker para a aplicação  
-```sh
-docker build -t app-base-project:1.0 .
-```
-Onde: `-t` é utilizado para especificar o nome da imagem e a tag  
+### 📄 Logging
 
-5. Executar os serviços definidos no arquivo docker-compose.yml  
-```sh
-docker-compose up -d
-```
+* Logback is configured with a custom pattern
+* `requestId` is automatically included in all application logs
+* Improves traceability across distributed requests
 
-**Após executar os passos acima, os seguintes serviços estarão em execução:**
-- 1 instância do NGINX atendendo na porta `80`
-- 2 instâncias da aplicação (backend) atendendo nas portas `8081` e `8082`
+### ⚠️ Exception Handling
 
-### Encerrar execução das imagens  
-Para encerrar a execução das imagens Docker, siga os passos abaixo:
-1. acessar diretório do arquivo **docker-compose.yml**  
-2. executar o comando `docker compose down`
+* Centralized exception handling structure
+* Validation errors and common REST exceptions are customized
+* Responses follow the **Problem Details (RFC 7807)** format
+* Easy to extend with custom exception handlers
 
-Obs: se desejar remover imagem da aplicação  
-```sh
-docker image rm app-base-project:1.0  
-```
 ---
 
-## Endpoints (exemplos)
+## Technology Stack
 
-Abaixo estão alguns exemplos para os recursos disponíveis:
+* **Java Development Kit**: 25
+* **Spring Boot**: 4
+* **Maven** (via Maven Wrapper)
+* **Docker**
+* **Docker Compose**
+* **NGINX**
+* **Git**
 
-- ### Obter informações da aplicação
-    - Método: **GET**
-    - Endpoint: http://localhost:80/base-app/api/v1/info
-    - Response:
-      ```json
-      {
-        "name": "string",
-        "description": "string",
-        "appVersion": "string",
-        "springBootVersion": "string",
-        "javaVersion": "string"
-      }
-      ```
+---
 
-- ### Testar internacionalização
-  - Método: **GET**  
-  - Endpoint: http://localhost:80/base-app/api/v1/i18n/test
-  - Header:
-    - Accept-Language: `en-US`ou `pt-BR`
-  - Response (en-US): 
-    ```json
-    {
-        "message": "TEST (en-US)"
-    }
-    ```
+## Local Execution (Recommended)
 
-- ### Quando houver erros na requisição
-  - Método: **GET**  
-  - Endpoint: http://localhost:80/base-app/api/v1/unknown  
-  - Response (exemplo `en-US`):
-    ```json
-    {
-      "type": "about:blank",
-      "title": "Resource not found",
-      "status": 404,
-      "detail": "Resource 'api/v1/unknown' does not exist.",
-      "instance": "/base-app/api/v1/unknown",
-      "timestamp": "2024-09-07T22:01:47.31595866Z",
-      "requestId": "f5281b21-888e-4730-98e2-26ec71afcd61",
-      "userMessage": "The accessed resource does not exist."
-    }
-    ```
+> ⚠️ **Do not build or run the application manually with Maven or Docker commands.**
+> The project provides a dedicated script to manage the entire lifecycle.
+
+### Build Script
+
+The `build.sh` script is the **single entry point** to:
+
+* build the Docker image
+* extract the application version from `pom.xml`
+* manage Docker Compose
+* start, stop, or restart the environment
+
+To see all available options and usage instructions, run:
+
+```sh
+./build.sh --help
+```
+
+---
+
+## Available Commands
+
+### Build Docker Image Only (default)
+
+```sh
+./build.sh
+```
+
+or explicitly:
+
+```sh
+./build.sh --build
+```
+
+---
+
+### Build Image and Start Containers
+
+```sh
+./build.sh --up
+```
+
+---
+
+### Restart the Entire Environment
+
+```sh
+./build.sh --restart
+```
+
+This will:
+
+1. Stop containers
+2. Rebuild the image
+3. Start the environment again
+
+---
+
+### Stop and Remove Containers
+
+```sh
+./build.sh --down
+```
+
+---
+
+## What Gets Started
+
+After running `./build.sh --up`, the following services will be available:
+
+* **NGINX** (reverse proxy):
+
+  * Port: `80`
+* **2 backend application instances**:
+
+  * Instance 1: internal port `8081`
+  * Instance 2: internal port `8082`
+
+All traffic is routed through NGINX.
+
+---
+
+## Application URLs
+
+### Swagger UI
+
+```text
+http://localhost/base-app/swagger-ui/index.html
+```
+
+### OpenAPI JSON
+
+```text
+http://localhost/base-app/v3/api-docs
+```
+
+---
+
+## API Endpoints (Examples)
+
+### Get Application Information
+
+* **Method**: `GET`
+* **Endpoint**:
+
+  ```
+  http://localhost/base-app/api/v1/info
+  ```
+* **Response**:
+
+  ```json
+  {
+    "name": "string",
+    "description": "string",
+    "appVersion": "string",
+    "springBootVersion": "string",
+    "javaVersion": "string"
+  }
+  ```
+
+---
+
+### Test Internationalization
+
+* **Method**: `GET`
+* **Endpoint**:
+
+  ```
+  http://localhost/base-app/api/v1/i18n/test
+  ```
+* **Header**:
+
+  ```
+  Accept-Language: en-US | pt-BR
+  ```
+* **Response (en-US)**:
+
+  ```json
+  {
+    "message": "TEST (en-US)"
+  }
+  ```
+
+---
+
+### Error Handling Example
+
+* **Method**: `GET`
+* **Endpoint**:
+
+  ```
+  http://localhost/base-app/api/v1/unknown
+  ```
+* **Response**:
+
+  ```json
+  {
+    "type": "about:blank",
+    "title": "Resource not found",
+    "status": 404,
+    "detail": "Resource 'api/v1/unknown' does not exist.",
+    "instance": "/base-app/api/v1/unknown",
+    "timestamp": "2024-09-07T22:01:47.31595866Z",
+    "requestId": "f5281b21-888e-4730-98e2-26ec71afcd61",
+    "userMessage": "The accessed resource does not exist."
+  }
+  ```
+
+---
+
+## Architecture Notes
+
+* The application **does not use a Spring context-path**
+* `/base-app` is handled **exclusively by NGINX**
+* NGINX removes `/base-app` before forwarding requests to the backend
+* This setup mirrors real production environments using reverse proxies
+
+---
+
+## Final Notes
+
+* Maven Wrapper (`./mvnw`) guarantees consistent Maven versions
+* Docker image tags are automatically aligned with `pom.xml` version
+* The environment is fully reproducible with a single command
